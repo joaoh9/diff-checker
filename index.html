@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Paste two texts and see exactly where they differ." />
+    <title>diff.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Young+Serif&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <a class="skip-link" href="#original">Skip to editor</a>
+    <div class="desk">
+      <header class="masthead">
+        <p class="wordmark">diff<span>.</span></p>
+        <p class="lede">Paste two versions. See the marks.</p>
+      </header>
+
+      <p id="notice" class="notice" role="status" aria-live="polite" hidden></p>
+
+      <section id="compose" class="workspace" aria-label="Edit texts">
+        <div class="panes">
+          <div class="sheet">
+            <div class="sheet-top">
+              <label for="original">Original</label>
+              <span id="original-count" class="count">0 words</span>
+            </div>
+            <textarea
+              id="original"
+              name="original"
+              spellcheck="false"
+              autocomplete="off"
+              placeholder="Paste the earlier version here."
+            ></textarea>
+          </div>
+          <div class="sheet">
+            <div class="sheet-top">
+              <label for="changed">Changed</label>
+              <span id="changed-count" class="count">0 words</span>
+            </div>
+            <textarea
+              id="changed"
+              name="changed"
+              spellcheck="false"
+              autocomplete="off"
+              placeholder="Paste the later version here."
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="compare-btn" class="stamp" type="button">Find difference</button>
+          <p class="hint">
+            <kbd id="shortcut-key">Cmd</kbd>
+            <span>+</span>
+            <kbd>Enter</kbd>
+          </p>
+          <div class="secondary">
+            <button id="example-btn" type="button">Try example</button>
+            <button data-action="swap" type="button">Swap</button>
+            <button id="clear-btn" type="button">Clear</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="compare" class="workspace" aria-label="Comparison" hidden>
+        <div class="result-bar">
+          <p id="summary" class="summary" tabindex="-1" aria-live="polite"></p>
+          <div class="result-actions">
+            <button data-action="swap" type="button">Swap</button>
+            <button id="edit-btn" type="button">Edit texts</button>
+          </div>
+        </div>
+        <div id="diff-board" class="diff-board"></div>
+      </section>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
