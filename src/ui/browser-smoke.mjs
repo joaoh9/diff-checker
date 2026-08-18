@@ -39,6 +39,57 @@ try {
   )
   await page.screenshot({ path: '/tmp/diff-checker-result.png', fullPage: true })
 
+  assert(await page.locator('#next-diff').isVisible(), 'next change should be available after a real diff')
+  assert(
+    (await page.locator('#diff-pos').innerText()) === '3 changes',
+    'unset cursor should count the example changes',
+  )
+  await page.getByRole('button', { name: 'Next change' }).click()
+  assert(
+    (await page.locator('#diff-pos').innerText()) === '1 of 3',
+    'first next should land on the first change',
+  )
+  assert(
+    (await page.locator('.diff-row.is-current').count()) === 1,
+    'exactly one row should be the current change',
+  )
+
+  await page.getByRole('button', { name: 'Edit texts' }).click()
+  const filler = Array.from({ length: 40 }, (_, index) => `unchanged line ${index + 1}`).join('\n')
+  await page.locator('#original').fill(`ALPHA one\n${filler}\nBETA two\n${filler}\nGAMMA three`)
+  await page.locator('#changed').fill(`ALPHA 1\n${filler}\nBETA 2\n${filler}\nGAMMA 3`)
+  await page.getByRole('button', { name: 'Find difference' }).click()
+  await page.getByRole('button', { name: 'Next change' }).click()
+  await page.getByRole('button', { name: 'Next change' }).click()
+  await page.waitForFunction(() => {
+    const body = document.querySelector('.diff-body')
+    const current = document.querySelector('.diff-row.is-current')
+    if (!(body instanceof HTMLElement) || !(current instanceof HTMLElement)) return false
+    if (!current.textContent?.includes('BETA')) return false
+    const boardBox = body.getBoundingClientRect()
+    const rowBox = current.getBoundingClientRect()
+    return rowBox.top >= boardBox.top - 2 && rowBox.bottom <= boardBox.bottom + 2
+  })
+  const jump = await page.evaluate(() => {
+    const body = document.querySelector('.diff-body')
+    const current = document.querySelector('.diff-row.is-current')
+    if (!(body instanceof HTMLElement) || !(current instanceof HTMLElement)) return null
+    const boardBox = body.getBoundingClientRect()
+    const rowBox = current.getBoundingClientRect()
+    return {
+      pos: document.querySelector('#diff-pos')?.textContent ?? '',
+      text: current.textContent ?? '',
+      inView: rowBox.top >= boardBox.top - 2 && rowBox.bottom <= boardBox.bottom + 2,
+      scrollTop: body.scrollTop,
+    }
+  })
+  assert(jump !== null, 'scroll jump should find a current row')
+  assert(jump.pos === '2 of 3', `second jump should be 2 of 3, got: ${jump.pos}`)
+  assert(jump.text.includes('BETA'), `second jump should land on BETA, got: ${jump.text}`)
+  assert(jump.scrollTop > 50, `board should scroll to a later change, scrollTop=${jump.scrollTop}`)
+  assert(jump.inView, 'current change should be visible inside the board')
+  await page.screenshot({ path: '/tmp/diff-checker-next.png', fullPage: true })
+
   await page.locator('#compare [data-action="swap"]').click()
   const swapped = await page.locator('#summary').innerText()
   assert(swapped.includes('changed'), `swap should still show a diff, got: ${swapped}`)
@@ -46,7 +97,7 @@ try {
   await page.getByRole('button', { name: 'Edit texts' }).click()
   assert(await page.locator('#original').isVisible(), 'edit should return to the original pane')
   const original = await page.locator('#original').inputValue()
-  assert(original.includes('Wednesday'), 'swap should have moved the changed text into Original')
+  assert(original.includes('ALPHA 1'), 'swap should have moved the changed text into Original')
 
   await page.getByRole('button', { name: 'Clear' }).click()
   assert((await page.locator('#original').inputValue()) === '', 'clear should empty original')

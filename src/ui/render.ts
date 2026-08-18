@@ -1,4 +1,5 @@
 import type { DiffResult, DiffRow, InlineToken } from '../diff/types.ts'
+import { isDiffRowKind } from './navigate.ts'
 
 function tokenNode(token: InlineToken): HTMLSpanElement {
   const span = document.createElement('span')
@@ -69,6 +70,7 @@ export function renderDiff(board: HTMLElement, result: DiffResult) {
   for (const row of result.rows) {
     const rowEl = document.createElement('div')
     rowEl.className = `diff-row is-${row.kind}`
+    if (isDiffRowKind(row.kind)) rowEl.dataset.diff = ''
     rowEl.append(cell(row, 'left'), cell(row, 'right'))
     body.append(rowEl)
   }

@@ -25,6 +25,14 @@ describe('renderDiff', () => {
     expect(right?.classList.contains('has-mark')).toBe(true)
   })
 
+  it('marks only changed rows as jump targets', () => {
+    const board = document.createElement('div')
+    renderDiff(board, compareTexts('keep\nold\nkeep', 'keep\nnew\nkeep'))
+
+    const rows = [...board.querySelectorAll('.diff-row')]
+    expect(rows.map((row) => row.hasAttribute('data-diff'))).toEqual([false, true, false])
+  })
+
   it('keeps add and remove on the same aligned row', () => {
     const board = document.createElement('div')
     renderDiff(board, compareTexts('left only', 'right only'))

@@ -29,6 +29,7 @@ npm run preview   # serve the build locally
 - Side-by-side result, with changed lines kept on the same row
 - Word-level marks: strikethrough for removals, weight for additions
 - A short summary (`3 lines changed. +9 / −6 words`)
+- **Next change** jumps to the next added, removed, or edited line (`n`)
 - Swap, clear, an example, and `Cmd+Enter` / `Ctrl+Enter` to compare
 
 There is no account, no share link, and no file upload. Paste, compare, close the tab.

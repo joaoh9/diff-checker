@@ -70,7 +70,15 @@
 
       <section id="compare" class="workspace" aria-label="Comparison" hidden>
         <div class="result-bar">
-          <p id="summary" class="summary" tabindex="-1" aria-live="polite"></p>
+          <div class="result-lead">
+            <p id="summary" class="summary" tabindex="-1" aria-live="polite"></p>
+            <div id="diff-nav" class="diff-nav" hidden>
+              <button id="next-diff" class="nav-btn" type="button" aria-describedby="diff-pos">
+                Next change
+              </button>
+              <p id="diff-pos" class="diff-pos" aria-live="polite"></p>
+            </div>
+          </div>
           <div class="result-actions">
             <button data-action="swap" type="button">Swap</button>
             <button id="edit-btn" type="button">Edit texts</button>
